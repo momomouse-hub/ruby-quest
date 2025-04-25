@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class Game
-  require_relative 'player'
-  require_relative 'card'
+  require_relative "player"
+  require_relative "card"
 
   attr_reader :players
 
@@ -31,8 +33,8 @@ class Game
   end
 
   def deal_cards
-    first_half = @deck.slice(0...@deck.size/2)
-    second_half = @deck.slice((@deck.size/2)...@deck.size)
+    first_half = @deck.slice(0...@deck.size / 2)
+    second_half = @deck.slice((@deck.size / 2)...@deck.size)
     @players[0].hand_card = first_half
     @players[1].hand_card = second_half
     @deck = []
@@ -45,12 +47,12 @@ class Game
     @deck.concat(cards)
     if cards[0].number > cards[1].number
       player1.won_card.concat(@deck)
-      return { result: :win, winner: player1, cards: cards }
+      { result: :win, winner: player1, cards: cards }
     elsif cards[0].number < cards[1].number
       player2.won_card.concat(@deck)
-      return { result: :win, winner: player2, cards: cards }
+      { result: :win, winner: player2, cards: cards }
     else
-      return { result: :draw , cards: cards }
+      { result: :draw, cards: cards }
     end
   end
 end
