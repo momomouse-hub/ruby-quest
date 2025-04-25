@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Card
   attr_accessor :mark, :number
   def initialize(mark, number)

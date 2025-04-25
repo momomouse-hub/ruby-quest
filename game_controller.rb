@@ -1,4 +1,6 @@
-require_relative 'game'
+# frozen_string_literal: true
+
+require_relative "game"
 
 class GameController
   def initialize
