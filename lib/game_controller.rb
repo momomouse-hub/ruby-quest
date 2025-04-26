@@ -9,11 +9,14 @@ class GameController
 
   def start
     display_game_start_message
+    setup_players
     @game.deal_cards
     display_deal_cards_message
 
+    players = @game.players
+
     loop do
-      hand_cards_status = @game.both_players_have_hand_cards?
+      hand_cards_status = @game.all_players_have_hand_cards?
 
       if hand_cards_status[:status] == :empty
         empty_player = hand_cards_status[:empty_player]
@@ -26,8 +29,14 @@ class GameController
       end
 
       display_war_massage
-      result = @game.compare_play_cards
-      display_compare_result(result)
+      result = @game.compare_play_cards(players)
+      display_compare_result(result, players)
+
+      if result[:result] == :win
+        players = @game.players
+      elsif result[:result] == :draw
+        players = result[:players]
+      end
     end
     merge_won_cards_into_hand_cards
     display_hand_cards_and_ranking
@@ -39,6 +48,23 @@ class GameController
       puts "戦争を開始します。"
     end
 
+    def setup_players
+      print "プレイヤーの人数を入力してください(2〜5)："
+      player_count = gets.to_i
+      until player_count.between?(2, 5)
+        print "不正な値が入力されました。2〜5の数字を入力してください:"
+        player_count = gets.to_i
+      end
+
+      @game.players = []
+
+      player_count.times do |i|
+        print "プレイヤー#{i + 1}の名前を入力してください："
+        name = gets.chomp
+        @game.players << Player.new(name)
+      end
+    end
+
     def display_deal_cards_message
       puts "カードが配られました。"
     end
@@ -47,11 +73,11 @@ class GameController
       puts "戦争！"
     end
 
-    def display_compare_result(result)
-      result[:cards].each_with_index do |card, i|
-        puts "#{@game.players[i].name}のカードは#{card.mark}の#{card.display_number}です。"
+    def display_compare_result(result, players)
+      players.zip(result[:cards]).each do |player, card|
+        next if player.nil? || card.nil?
+        puts "#{player.name}のカードは#{card.mark}の#{card.display_number}です。"
       end
-
       puts make_result_massage(result)
     end
 

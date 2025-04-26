@@ -4,22 +4,21 @@ class Game
   require_relative "player"
   require_relative "card"
 
-  attr_reader :players
-  attr_accessor :deck
+  attr_accessor :deck, :players
 
   def initialize
-    @players = create_player
+    @players = []
     @deck = create_deck
   end
 
-  def create_player
-    players = []
-    for i in 1..2 do
-      player = Player.new("プレイヤー#{i}")
-      players << player
-    end
-    players
-  end
+  # def create_player
+  #   players = []
+  #   for i in 1..2 do
+  #     player = Player.new("プレイヤー#{i}")
+  #     players << player
+  #   end
+  #   players
+  # end
 
   def create_deck
     deck = []
@@ -34,14 +33,14 @@ class Game
   end
 
   def deal_cards
-    first_half = @deck.slice(0...@deck.size / 2)
-    second_half = @deck.slice((@deck.size / 2)...@deck.size)
-    @players[0].hand_cards = first_half
-    @players[1].hand_cards = second_half
+    @deck.each_with_index do |card, index|
+      player = @players[index % @players.size]
+      player.hand_cards << card
+    end
     @deck = []
   end
 
-  def both_players_have_hand_cards?
+  def all_players_have_hand_cards?
     empty_player = @players.select { |player| player.hand_cards.empty? }
     if empty_player.empty?
       { status: :not_empty }
@@ -62,23 +61,24 @@ class Game
     { status: :continue }
   end
 
-  def compare_play_cards
-    player1 = @players[0]
-    player2 = @players[1]
-    cards = [player1.play_card, player2.play_card]
+  def compare_play_cards(players)
+    cards = []
+    players.each do |player|
+      cards << player.play_card
+    end
     @deck.concat(cards)
-    if cards[0].number > cards[1].number
-      player1.won_card.concat(@deck)
+    strongest_number = cards.map(&:number).max
+    strongest_indices = cards.each_index.select { |i| cards[i].number == strongest_number }
+
+    if strongest_indices.size == 1
       won_card_count = @deck.size
+      winner = players[strongest_indices[0]]
+      winner.won_card.concat(@deck)
       @deck = []
-      { result: :win, winner: player1, cards: cards, won_card_count: won_card_count }
-    elsif cards[0].number < cards[1].number
-      player2.won_card.concat(@deck)
-      won_card_count = @deck.size
-      @deck = []
-      { result: :win, winner: player2, cards: cards, won_card_count: won_card_count }
+      { result: :win, winner: winner, cards: cards, won_card_count: won_card_count }
     else
-      { result: :draw, cards: cards }
+      next_players = strongest_indices.map {|i| players[i]}
+      { result: :draw, cards: cards, players: next_players }
     end
   end
 end
