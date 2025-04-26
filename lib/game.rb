@@ -43,10 +43,10 @@ class Game
 
   def both_players_have_hand_cards?
     empty_player = @players.select { |player| player.hand_cards.empty? }
-    if empty_player
-      { status: :empty, empty_player: empty_player }
-    else
+    if empty_player.empty?
       { status: :not_empty }
+    else
+      { status: :empty, empty_player: empty_player }
     end
   end
 
@@ -76,7 +76,7 @@ class Game
       player2.won_card.concat(@deck)
       won_card_count = @deck.size
       @deck = []
-      { result: :win, winner: player2, cards: cards, won_card_count:won_card_count }
+      { result: :win, winner: player2, cards: cards, won_card_count: won_card_count }
     else
       { result: :draw, cards: cards }
     end
