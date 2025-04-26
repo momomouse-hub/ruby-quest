@@ -78,13 +78,13 @@ class Game
       return { result: :win, winner: winner, cards: cards, won_card_count: won_card_count }
     end
 
-    spade_a_index = cards.find_index{ |card| card.mark == "スペード" && card.number == 14}
+    spade_a_index = cards.find_index { |card| card.mark == "スペード" && card.number == 14 }
     if spade_a_index
       winner = players[spade_a_index]
       won_card_count = @deck.size
       winner.won_card.concat(@deck)
       @deck = []
-      return { result: :win, winner: winner, cards: cards, won_card_count: won_card_count, spade_a: true}
+      return { result: :win, winner: winner, cards: cards, won_card_count: won_card_count, spade_a: true }
     end
 
     strongest_number = cards.map(&:number).max
