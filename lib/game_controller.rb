@@ -76,8 +76,13 @@ class GameController
     def display_compare_result(result, players)
       players.zip(result[:cards]).each do |player, card|
         next if player.nil? || card.nil?
-        puts "#{player.name}のカードは#{card.mark}の#{card.display_number}です。"
+        if card.mark == "ジョーカー"
+          puts "#{player.name}のカードはジョーカーです。"
+        else
+          puts "#{player.name}のカードは#{card.mark}の#{card.display_number}です。"
+        end
       end
+      puts "スペードのAは世界一!" if result[:spade_a]
       puts make_result_massage(result)
     end
 
