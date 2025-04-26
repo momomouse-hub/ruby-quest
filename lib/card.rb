@@ -12,6 +12,7 @@ class Card
     when 12 then "Q"
     when 13 then "K"
     when 14 then "A"
+    when 15 then ""
     else @number.to_s
     end
   end

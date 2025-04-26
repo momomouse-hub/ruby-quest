@@ -29,6 +29,7 @@ class Game
         deck << Card.new(mark, number)
       end
     end
+    deck << Card.new("ジョーカー", 15)
     deck.shuffle!
   end
 
@@ -67,6 +68,25 @@ class Game
       cards << player.play_card
     end
     @deck.concat(cards)
+
+    joker_index = cards.find_index { |card| card.mark == "ジョーカー" }
+    if joker_index
+      winner = players[joker_index]
+      won_card_count = @deck.size
+      winner.won_card.concat(@deck)
+      @deck = []
+      return { result: :win, winner: winner, cards: cards, won_card_count: won_card_count }
+    end
+
+    spade_a_index = cards.find_index { |card| card.mark == "スペード" && card.number == 14 }
+    if spade_a_index
+      winner = players[spade_a_index]
+      won_card_count = @deck.size
+      winner.won_card.concat(@deck)
+      @deck = []
+      return { result: :win, winner: winner, cards: cards, won_card_count: won_card_count, spade_a: true }
+    end
+
     strongest_number = cards.map(&:number).max
     strongest_indices = cards.each_index.select { |i| cards[i].number == strongest_number }
 
@@ -77,7 +97,7 @@ class Game
       @deck = []
       { result: :win, winner: winner, cards: cards, won_card_count: won_card_count }
     else
-      next_players = strongest_indices.map {|i| players[i]}
+      next_players = strongest_indices.map { |i| players[i] }
       { result: :draw, cards: cards, players: next_players }
     end
   end
