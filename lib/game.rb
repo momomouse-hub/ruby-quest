@@ -77,7 +77,7 @@ class Game
       @deck = []
       { result: :win, winner: winner, cards: cards, won_card_count: won_card_count }
     else
-      next_players = strongest_indices.map {|i| players[i]}
+      next_players = strongest_indices.map { |i| players[i] }
       { result: :draw, cards: cards, players: next_players }
     end
   end
