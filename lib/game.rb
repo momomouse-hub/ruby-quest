@@ -41,6 +41,27 @@ class Game
     @deck = []
   end
 
+  def both_players_have_hand_cards?
+    empty_player = @players.select { |player| player.hand_cards.empty? }
+    if empty_player
+      { status: :empty, empty_player: empty_player }
+    else
+      { status: :not_empty }
+    end
+  end
+
+  def empty_player_have_won_cards?(empty_player)
+    empty_player.each do |player|
+      if player.won_card.empty?
+        return { status: :lose, loser: player }
+      else
+        player.hand_cards.concat(player.won_card.shuffle!)
+        player.won_card = []
+      end
+    end
+    { status: :continue }
+  end
+
   def compare_play_cards
     player1 = @players[0]
     player2 = @players[1]
@@ -48,10 +69,14 @@ class Game
     @deck.concat(cards)
     if cards[0].number > cards[1].number
       player1.won_card.concat(@deck)
-      { result: :win, winner: player1, cards: cards }
+      won_card_count = @deck.size
+      @deck = []
+      { result: :win, winner: player1, cards: cards, won_card_count: won_card_count }
     elsif cards[0].number < cards[1].number
       player2.won_card.concat(@deck)
-      { result: :win, winner: player2, cards: cards }
+      won_card_count = @deck.size
+      @deck = []
+      { result: :win, winner: player2, cards: cards, won_card_count:won_card_count }
     else
       { result: :draw, cards: cards }
     end
