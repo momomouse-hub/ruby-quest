@@ -8,6 +8,7 @@ gem 'minitest'
 # gem "rails"
 group :development do
   gem 'rubocop', require: false
+  # rubocop-railsは不要ではないですかね？
   gem 'rubocop-rails', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-packaging', require: false
