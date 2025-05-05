@@ -11,6 +11,8 @@ class Game
     @deck = create_deck
   end
 
+  # これは不要じゃないですかね？？
+  # あとでコメントアウトを外す予定があるなら、TODOコメントをしておきたいです！
   # def create_player
   #   players = []
   #   for i in 1..2 do
@@ -62,6 +64,12 @@ class Game
     { status: :continue }
   end
 
+  # 一メソッドで複数のことをやりすぎています。
+  # 以下の実装を参考に、なるべく　 1つのmethodで 1つの処理になる様にしてみましょう！
+  # https://github.com/kakeru-one/apprentice_sample_answer/blob/main/war_game/game.rb
+  #
+  # また、Hashにしている部分はStructに変更することで、keyを固定のものとして定義することができそうです！
+  # reference: https://qiita.com/k-penguin-sato/items/54189d5ed4e5f7463266
   def compare_play_cards(players)
     cards = []
     players.each do |player|
